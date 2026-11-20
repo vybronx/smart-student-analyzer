@@ -1,178 +1,222 @@
-# SMART STUDENT ANALYZER
-> **A Web-Based Academic Performance Analysis and Institutional Insights System**
+# 🎓 SMART STUDENT ANALYZER
+### *A Smart Web-Based System for Student Academic Performance Analysis and Institutional Insights*
 
 ---
 
-## 📌 Abstract & Overview
+## 👨‍🎓 About The Project
 
-**Smart Student Analyzer** is a web-based student performance management and analytics application designed to replace cumbersome manual record-keeping and standalone spreadsheets. Developed using **Python Flask**, **MySQL**, and **Bootstrap 5**, the platform offers a centralized database for managing student profiles, registering curriculum subjects, recording examination marks, calculating percentage metrics, and generating letter grades automatically.
+During our college semesters, we observed that our professors and department staff spent countless hours manually maintaining marks in paper registers and Excel spreadsheets. Calculating percentages by hand, assigning letter grades, and identifying students who were failing or needing urgent counseling was not only time-consuming but also prone to calculation errors.
 
-The system incorporates early-risk identification algorithms that actively flag academically weak students for counseling, as well as an analytics engine that displays subject averages, grade distributions, and semester progress graphs.
+To solve this practical problem, I built the **Smart Student Analyzer** as my final year academic project. 
+
+It is an automated web-based platform where teachers and administrators can manage student records, record examination marks, and instantly view analytics. The system calculates percentages, assigns grades, visualizes subject trends using interactive charts, tracks semester progress, and automatically flags **At-Risk students** so faculty can arrange timely remedial classes and academic counseling.
 
 ---
 
-## ⚙️ System Requirements
+## 💻 System Requirements
+
+*(Specified in accordance with our Project Synopsis - Section 10)*
 
 ### 1. Hardware Requirements
-* **Processor:** Intel Core i3 / i5 or equivalent (2.0 GHz+)
-* **RAM:** 4 GB minimum (8 GB recommended)
-* **Storage:** 20 GB free space
-* **Display:** 1366x768 resolution or higher
+| Component | Minimum Specification | Recommended Specification |
+|---|---|---|
+| **Processor** | Intel Core i3 or equivalent | Intel Core i5 / AMD Ryzen 5 or higher |
+| **RAM** | 4 GB | 8 GB DDR4 |
+| **Hard Disk** | 20 GB free space | SSD with 20+ GB free space |
+| **Display** | 15-inch monitor (1366 x 768) | Full HD (1920 x 1080) |
+| **Input Devices** | Standard Keyboard & Mouse | Standard Keyboard & Mouse |
 
 ### 2. Software Requirements
-* **Frontend:** HTML5, CSS3, JavaScript, Bootstrap 5 Framework, Chart.js
-* **Backend:** Python 3.9+ with Flask Web Framework
-* **WSGI Production Server:** Gunicorn
-* **Database:** MySQL Server (Community Edition) / TiDB Cloud / SQLite (Local fallback)
-* **Browser:** Google Chrome, Microsoft Edge, Mozilla Firefox
+* **Operating System:** Windows 10 / Windows 11 (also runs on Linux / macOS)
+* **Backend Framework:** Python 3.9+ with Flask
+* **Database Engine:** MySQL Server (Community Edition) / Cloud MySQL (TiDB / Aiven) / SQLite (zero-config local development)
+* **Frontend Technologies:** HTML5, CSS3, JavaScript, Bootstrap 5, Chart.js
+* **WSGI Production Server:** Gunicorn (for cloud deployment)
+* **Development IDE:** Visual Studio Code (VS Code)
+* **Supported Browsers:** Google Chrome, Microsoft Edge, Mozilla Firefox
 
 ---
 
-## 🏗️ System Architecture & Core Modules
+## 🛠️ Technology Stack & Architecture
 
-The application is built on a standard **Three-Tier Architecture**:
-1. **Presentation Layer (Frontend):** Responsive Bootstrap 5 interface, interactive Chart.js graphs, printable report cards.
-2. **Application Layer (Backend Logic):** Python Flask handling role-based authentication, request routing, and data processing.
-3. **Database Layer:** Relational database (`schema.sql`) maintaining students, subjects, marks, and audit reports.
-
-### Functional Modules:
-1. **User Authentication Module:** Secure role-based login (`admin`, `teacher`, `student`) with salted password hashing (`PBKDF2-SHA256`).
-2. **Student Information Management Module:** Full CRUD operations for student records, enrollment indexing, search and semester filtering.
-3. **Curriculum & Marks Management Module:** Subject course registry, credits allocation, examination entry (Semester Finals, Midterms, Practicals).
-4. **Performance Analytics Engine:**
-   * Formula:
-     $$\text{Percentage} = \left(\frac{\sum \text{Marks Obtained}}{\sum \text{Total Marks}}\right) \times 100$$
-   * Automated Grade Scale:
-     * **A+** ($\ge 90\%$): Outstanding
-     * **A** ($80\% - 89\%$): Excellent
-     * **B** ($70\% - 79\%$): Very Good
-     * **C** ($60\% - 69\%$): Good
-     * **D** ($50\% - 59\%$): Pass / Average
-     * **F** ($< 50\%$): Fail / Needs Intervention
-5. **Early Academic Intervention (At-Risk Tracker):** Automatically detects students with aggregate scores below 50% or failed subjects to enable remedial coaching.
-6. **Reporting & Visual Dashboard:**
-   * Executive summary metrics (Total Enrolled, Class Average, Top Performer, At-Risk Count).
-   * Interactive charts (Subject averages, Grade demographic doughnut, Semester progression line chart).
-   * Printable University-standard individual student transcripts and semester batch reports.
-
----
-
-## 📂 Project Directory Structure
+I designed this application following the classic **Three-Tier Software Architecture**:
 
 ```
-Smart_Student_Analyzer/
-├── app.py                     # Main Flask web application and API endpoints
-├── config.py                  # Database & application environment configuration
-├── database.py                # Database connection manager (MySQL & SQLite fallback)
-├── models.py                  # Database query helper functions & CRUD logic
-├── analytics.py               # Performance Analytics mathematical engine
-├── schema.sql                 # MySQL schema script
-├── seed_data.py               # Pre-populated demo database generator
+[ User Browser (HTML5 / Bootstrap 5 / Chart.js) ]
+                      ▲
+                      │  HTTP Requests / JSON Responses
+                      ▼
+       [ Flask Application Server (Python) ]
+                      ▲
+                      │  SQL Queries (PyMySQL / SQLite3)
+                      ▼
+   [ Relational Database (MySQL / TiDB / SQLite) ]
+```
+
+* **Frontend (Presentation Layer):** Responsive web interface built using **Bootstrap 5** for mobile and desktop compatibility. Data visualizations are rendered dynamically via **Chart.js**. Printable report cards use custom CSS `@media print` styling for clean paper printouts.
+* **Backend (Application Layer):** Lightweight and modular **Python Flask** framework. It handles user sessions, route security, and mathematical analytics computations.
+* **Database (Storage Layer):** Normalized relational database with foreign key integrity. Contains tables for `users`, `students`, `subjects`, `marks`, `reports`, and `notifications`.
+
+---
+
+## 🚀 Key Modules & Features
+
+### 1. User Authentication & Role Management (Module 7.1)
+* Role-based access control supporting **Administrator**, **Teacher / Faculty**, and **Student** logins.
+* Passwords are never stored in plain text; they are encrypted using **PBKDF2-SHA256 salted hashing** via `werkzeug.security`.
+* Session-based route protection using custom Python decorators (`@login_required`).
+
+### 2. Student Information Management (Module 7.2)
+* Complete registration portal for students with Roll Number, First Name, Last Name, Course Stream, Current Semester, Gender, Contact, and Email.
+* Real-time search by student name or roll number, with instant course and semester filtering.
+
+### 3. Subject Curriculum Catalog (Module 7.3)
+* Add, update, and manage subjects for different academic programs (e.g., B.Tech CS, BCA, MCA).
+* Tracks course codes, subject titles, and credit weightages.
+
+### 4. Examination Marks Ledger & Grade Engine (Module 7.4)
+* Records marks for Semester Final Exams, Midterms, Internal Assessments, and Practical Labs.
+* **Core Calculation Formula:**
+  $$\text{Percentage} = \left(\frac{\sum \text{Marks Obtained}}{\sum \text{Total Marks}}\right) \times 100$$
+* **Automated Grading Scale:**
+  * **A+ (90% - 100%):** Outstanding Performance
+  * **A (80% - 89%):** Excellent
+  * **B (70% - 79%):** Very Good
+  * **C (60% - 69%):** Good
+  * **D (50% - 59%):** Pass / Average
+  * **F (Below 50%):** Fail / Academic Alert
+
+### 5. Early Risk Detection (At-Risk Intervention Tracker)
+* Identifies students scoring below 50% overall or failing in individual subjects (<40% passing marks).
+* Highlights them on a dedicated faculty dashboard so teachers can assign remedial sessions or inform guardians before semester finals.
+
+### 6. Interactive Visual Analytics & Reports (Module 7.5)
+* **Dashboard Widgets:** Total enrolled students, overall batch average, current top ranker, and at-risk count.
+* **Visual Charts:**
+  1. *Subject-Wise Performance:* Bar chart comparing average scores across all subjects.
+  2. *Grade Demographics:* Doughnut chart showing distribution of letter grades.
+  3. *Semester Progression:* Line chart plotting aggregate trends across semesters.
+* **Official Printable Report Card:** Clean, university-standard grade sheet formatted with student bio, tabular marks breakdown, credit summary, and signature lines.
+* **Class Consolidated Sheet:** Batch-wide ledger exportable for department meetings.
+
+---
+
+## 📁 Project Directory Structure
+
+```
+smart-student-analyzer/
+│
+├── app.py                     # Main Flask application and URL routing
+├── config.py                  # Database connection and environment config
+├── database.py                # Database connector (supports MySQL and SQLite)
+├── models.py                  # SQL queries and business logic operations
+├── analytics.py               # Calculation algorithms (percentages, grades, statistics)
+├── schema.sql                 # Official MySQL DDL schema script
+├── seed_data.py               # Pre-populated realistic sample data script
 ├── test_app.py                # Automated unit and integration test suite
-├── requirements.txt           # Python application dependencies
-├── Procfile                   # Gunicorn process file for Render deployment
-├── render.yaml                # Render service definition file
-├── run.bat                    # One-click Windows startup batch script
+├── requirements.txt           # Python package requirements
+├── Procfile                   # Process file for cloud hosting (Render)
+├── render.yaml                # Render web service configuration
+├── run.bat                    # Windows 1-click startup batch script
 ├── .env.example               # Environment variables template
+├── .gitignore                 # Git ignore file for clean commits
+│
 ├── static/
 │   ├── css/
-│   │   └── style.css          # Custom layout styles & print media stylesheets
+│   │   └── style.css          # Custom styling, badges, and print CSS
 │   └── js/
-│       └── main.js            # Frontend interactivity and confirmations
+│       └── main.js            # UI confirmations, tooltips, and print actions
+│
 └── templates/
-    ├── base.html              # Layout master template with sidebar navigation
-    ├── login.html             # Secure user authentication portal
-    ├── dashboard.html         # Interactive analytics dashboard with Chart.js
-    ├── students/              # Student directory, registration, edit & view views
-    ├── subjects/              # Course curriculum catalog and management views
-    ├── marks/                 # Academic examination marks ledger views
-    ├── analytics/             # Performance trends & At-Risk intervention tracker
-    └── reports/               # Printable individual report cards & batch summaries
+    ├── base.html              # Main layout template with sidebar navigation
+    ├── login.html             # Secure login screen
+    ├── dashboard.html         # Interactive dashboard with Chart.js charts
+    ├── students/              # Add, edit, list, and view student profile templates
+    ├── subjects/              # Add, edit, and list curriculum subject templates
+    ├── marks/                 # Record, edit, and list examination marks templates
+    ├── analytics/             # Performance breakdown and At-Risk student templates
+    └── reports/               # Printable individual report card & class sheet templates
 ```
 
 ---
 
-## 💻 Local Setup & Execution Guide
+## 🏃‍♂️ How to Run Locally on Your Computer
 
-### Step 1: Clone or Open Project
-Open the project directory in your terminal or IDE (VS Code).
+### Prerequisites
+Make sure **Python 3.9 or higher** is installed on your system.
 
-### Step 2: Install Required Libraries
+### Step 1: Open the Project
+Open terminal or PowerShell inside the project directory:
+```bash
+cd smart-student-analyzer
+```
+
+### Step 2: Install Required Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 3: Populate Initial Demo Data
+### Step 3: Seed Sample Student Data *(Optional but Recommended)*
+To populate realistic student records, subjects, marks, and notifications:
 ```bash
 python seed_data.py
 ```
 
-### Step 4: Run the Web Server
-**Option A (Windows 1-Click):**
-Double-click `run.bat`
-
-**Option B (Command Line):**
-```bash
-python app.py
-```
-
-Access the application in your browser at:
-👉 **`http://127.0.0.1:5000`**
-
-### Default Sign-In Credentials:
-* **Administrator:** Username: `admin` | Password: `admin123`
-* **Faculty / Teacher:** Username: `teacher` | Password: `teacher123`
-* **Student:** Username: `student` | Password: `student123`
+### Step 4: Start the Server
+* **On Windows:** Simply double-click `run.bat` or run:
+  ```bash
+  python app.py
+  ```
+* Open your browser and go to:
+  👉 **`http://127.0.0.1:5000`**
 
 ---
 
-## 🌐 Free Cloud Hosting Guide (Render + Free MySQL + UptimeRobot)
+## 🔑 Default Login Credentials
 
-### 1. Free Cloud MySQL Setup (TiDB Cloud Serverless)
-1. Sign up for a free account at [TiDB Cloud](https://tidbcloud.com/) (No credit card required, 5 GB free forever).
-2. Create a free **Serverless Cluster**.
-3. Under **Connection**, select **General Connection String** (format: `mysql://<user>:<password>@<host>:4000/<database>`).
-4. Copy the connection string.
-
-### 2. Render Deployment
-1. Push your repository to GitHub or GitLab.
-2. Sign in to [Render](https://render.com/) and click **New +** -> **Web Service**.
-3. Connect your repository.
-4. Configure service settings:
-   * **Runtime:** Python 3
-   * **Build Command:** `pip install -r requirements.txt`
-   * **Start Command:** `gunicorn app:app`
-   * **Instance Type:** Free
-5. Under **Environment Variables**, add:
-   * `DATABASE_URL`: *(Your TiDB Cloud / MySQL connection string)*
-   * `SECRET_KEY`: *(A random secure string)*
-6. Click **Deploy Web Service**. Render will build and deploy the app!
-
-### 3. Keep-Alive Configuration (UptimeRobot)
-Render's free tier spins down if no request is received for 15 minutes. To keep it active 24/7:
-1. Sign up for free at [UptimeRobot](https://uptimerobot.com/).
-2. Click **Add New Monitor**.
-3. **Monitor Type:** `HTTP(s)`
-4. **Friendly Name:** `Smart Student Analyzer`
-5. **URL:** `https://your-app-name.onrender.com/health`
-6. **Monitoring Interval:** `5 minutes`
-7. Click **Create Monitor**.
-*UptimeRobot will send a heartbeat ping every 5 minutes to keep the Render server active around the clock.*
+| Role | Username | Password | Permissions |
+|---|---|---|---|
+| **Administrator** | `admin` | `admin123` | Full administrative control, user & marks management |
+| **Faculty / Teacher** | `teacher` | `teacher123` | Enter marks, update students, generate reports |
+| **Student** | `student` | `student123` | Read-only view for marks & report cards |
 
 ---
 
-## 🧪 Verification & Automated Testing
+## 🌐 Cloud Hosting & 24/7 Keep-Alive Architecture
 
-The project includes an automated test suite verifying calculation logic, grade assignments, risk thresholds, authentication, and API endpoints:
+This project is configured to run on free-tier cloud infrastructure with zero ongoing cost:
 
+1. **Host on Render (Web Service):**
+   - Connected directly to our GitHub repository.
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `gunicorn app:app`
+2. **24/7 Uptime with UptimeRobot:**
+   - Render's free tier sleeps after 15 minutes of inactivity.
+   - We implemented a lightweight `/health` endpoint in `app.py`.
+   - An **UptimeRobot HTTP monitor** pings `https://<our-app-url>.onrender.com/health` every 5 minutes, preventing cold-starts and keeping the site instantly accessible 24/7.
+3. **Database Persistence:**
+   - Works seamlessly with **TiDB Cloud Serverless** or **Aiven MySQL** (Free Forever MySQL wire-compatible databases) via the `DATABASE_URL` environment variable.
+
+---
+
+## 🧪 Testing & Verification
+
+The project includes an automated test suite verifying unit calculations, grade thresholds, authentication workflows, and API endpoints:
 ```bash
 python test_app.py
 ```
-*Result: 5/5 passed with 100% endpoint availability.*
+*Verification Result: 5/5 tests passed successfully with 100% endpoint health.*
 
 ---
 
-## 👨‍💻 Project Authors & Academic Submission
-* **Project Name:** Smart Student Analyzer
-* **Course:** Bachelor of Computer Applications / B.Tech Computer Science
-* **Academic Year:** 2026
+## 📚 Acknowledgments & References
+
+* **Course Textbooks:** IGNOU Software Engineering (BCS-051), Web Programming (BCS-053), Relational Database Design (MCS-014).
+* **Framework Documentation:** Python Flask Official Documentation, Bootstrap 5 Docs, Chart.js Guidelines.
+* **Faculty Guide:** Department of Computer Science & Engineering.
+
+---
+
+<p align="center">
+  <b>Smart Student Analyzer</b> • Developed as a Computer Science Capstone Project • 2026
+</p>
