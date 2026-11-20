@@ -249,5 +249,14 @@ def init_db():
                 ('admin', 'admin@smartanalyzer.edu', pwd_hash, 'admin')
             )
             print("[Database] Default admin account (admin / admin123) initialized.")
+
+        # If database has no students, populate demo records for immediate presentation
+        has_students = query_db("SELECT student_id FROM students LIMIT 1", one=True)
+        if not has_students:
+            try:
+                from seed_data import seed_all
+                seed_all()
+            except Exception as _e_seed:
+                print(f"[Database] Auto-seed notice: {_e_seed}")
     finally:
         conn.close()

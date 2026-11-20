@@ -11,16 +11,19 @@ def seed_all():
     print("[Seed] Initializing Database Tables...")
     init_db()
 
-    # 1. Check if already seeded
-    existing_user = query_db("SELECT * FROM users WHERE username = 'admin'", one=True)
-    if existing_user:
-        print("[Seed] Database already has admin user. Skipping seed.")
+    # 1. Check if already seeded with students
+    existing_students = query_db("SELECT student_id FROM students LIMIT 1", one=True)
+    if existing_students:
+        print("[Seed] Database already populated with students. Skipping seed.")
         return
 
-    print("[Seed] Creating administrative and instructor users...")
-    create_user('admin', 'admin@smartanalyzer.edu', 'admin123', role='admin')
-    create_user('teacher', 'faculty@smartanalyzer.edu', 'teacher123', role='teacher')
-    create_user('student', 'student@smartanalyzer.edu', 'student123', role='student')
+    # Check/Create admin user
+    existing_admin = query_db("SELECT * FROM users WHERE username = 'admin'", one=True)
+    if not existing_admin:
+        print("[Seed] Creating administrative and instructor users...")
+        create_user('admin', 'admin@smartanalyzer.edu', 'admin123', role='admin')
+        create_user('teacher', 'faculty@smartanalyzer.edu', 'teacher123', role='teacher')
+        create_user('student', 'student@smartanalyzer.edu', 'student123', role='student')
 
     print("[Seed] Creating curriculum subjects...")
     subjects = [
