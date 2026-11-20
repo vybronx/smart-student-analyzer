@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Performance Analytics Engine{% endblock %}
+{% block header_title %}Academic Analytics & Insights Engine{% endblock %}
+
+{% block header_actions %}
+<a href="{{ url_for('class_reports') }}" class="btn btn-sm btn-outline-primary">
+    <i class="fa-solid fa-file-invoice me-1"></i> Class Report Card
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Mathematical Engine Formula Banner -->
+<div class="alert alert-primary d-flex align-items-center mb-4 shadow-sm" role="alert">
+    <i class="fa-solid fa-square-root-variable fa-2x me-3"></i>
+    <div>
+        <h6 class="alert-heading fw-bold mb-1">Standard Mathematical Analytics Engine (Synopsis Section 7.4)</h6>
+        <span class="small">
+            Calculated as: <strong>Percentage = (&Sigma; Marks Obtained / &Sigma; Total Marks) &times; 100</strong>.
+            Grades: <strong>A+ (&ge;90%)</strong>, <strong>A (80-89%)</strong>, <strong>B (70-79%)</strong>, <strong>C (60-69%)</strong>, <strong>D (50-59%)</strong>, <strong>F (&lt;50%)</strong>.
+        </span>
+    </div>
+</div>
+
+<!-- Subject-Wise Detailed Analytics -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3 border-0">
+        <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-chart-bar text-primary me-2"></i>Subject-Wise Performance Metrics</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle custom-table mb-0">
+            <thead>
+                <tr>
+                    <th>Subject Code</th>
+                    <th>Subject Title</th>
+                    <th>Students Evaluated</th>
+                    <th>Average Score</th>
+                    <th>Pass Rate (%)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in summary.subject_stats %}
+                <tr>
+                    <td class="fw-bold text-primary">{{ sub.code }}</td>
+                    <td>{{ sub.name }}</td>
+                    <td>{{ sub.count }} Students</td>
+                    <td class="fw-bold">{{ sub.avg_marks }} / 100</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <span class="me-2 fw-semibold">{{ sub.pass_percentage }}%</span>
+                            <div class="progress flex-grow-1" style="height: 6px;">
+                                <div class="progress-bar {% if sub.pass_percentage >= 80 %}bg-success{% elif sub.pass_percentage >= 60 %}bg-primary{% else %}bg-danger{% endif %}" 
+                                     style="width: {{ sub.pass_percentage }}%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if sub.pass_percentage >= 80 %}
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success">High Pass Rate</span>
+                        {% elif sub.pass_percentage >= 60 %}
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary">Normal</span>
+                        {% else %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger">Attention Needed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Semester Progress & Demographics Breakdown -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-diagram-project text-success me-2"></i>Semester Average Trends</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for sem, avg in summary.sem_stats.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                        <span class="fw-bold">{{ sem }}</span>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="fw-bold text-primary">{{ avg }}%</span>
+                            <span class="badge {% if avg >= 75 %}bg-success{% else %}bg-primary{% endif %}">
+                                {% if avg >= 75 %}Excellent Batch{% else %}Satisfactory{% endif %}
+                            </span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-pie-chart text-info me-2"></i>Academic Grade Breakdown</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 text-center">
+                    {% for grade, count in summary.grade_distribution.items() %}
+                    <div class="col-4">
+                        <div class="p-3 border rounded-3 bg-light">
+                            <h3 class="fw-bold mb-0 
+                                {% if grade == 'A+' %}text-success
+                                {% elif grade == 'A' %}text-success
+                                {% elif grade == 'B' %}text-primary
+                                {% elif grade == 'C' %}text-warning
+                                {% elif grade == 'D' %}text-secondary
+                                {% else %}text-danger{% endif %}">{{ count }}</h3>
+                            <span class="badge 
+                                {% if grade == 'A+' %}badge-grade-aplus
+                                {% elif grade == 'A' %}badge-grade-a
+                                {% elif grade == 'B' %}badge-grade-b
+                                {% elif grade == 'C' %}badge-grade-c
+                                {% elif grade == 'D' %}badge-grade-d
+                                {% else %}badge-grade-f{% endif %} mt-1">Grade {{ grade }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

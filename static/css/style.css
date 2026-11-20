@@ -1,0 +1,131 @@
+/* SMART STUDENT ANALYZER - Custom Stylesheet */
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #475569;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --dark-bg: #0f172a;
+    --sidebar-bg: #1e293b;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    background-color: #f8fafc;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+    min-height: 100vh;
+}
+
+/* Sidebar & Navigation */
+.sidebar {
+    background-color: var(--sidebar-bg);
+    min-height: 100vh;
+    color: #94a3b8;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+}
+
+.sidebar .nav-link {
+    color: #cbd5e1;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    margin: 0.2rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    color: #ffffff;
+    background-color: rgba(37, 99, 235, 0.25);
+    border-left: 4px solid var(--primary-color);
+}
+
+.brand-badge {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Metric Cards */
+.metric-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+/* Performance Badges */
+.badge-grade-aplus { background-color: #10b981; color: white; }
+.badge-grade-a { background-color: #059669; color: white; }
+.badge-grade-b { background-color: #3b82f6; color: white; }
+.badge-grade-c { background-color: #f59e0b; color: white; }
+.badge-grade-d { background-color: #f97316; color: white; }
+.badge-grade-f { background-color: #ef4444; color: white; }
+
+/* Table Enhancements */
+.custom-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.custom-table thead {
+    background-color: #f1f5f9;
+}
+
+.custom-table th {
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 0.85rem 1rem;
+}
+
+.custom-table td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+}
+
+/* Printable Report Card Styles */
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    .no-print, .sidebar, .navbar, .btn, .alert {
+        display: none !important;
+    }
+    .print-container {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+}

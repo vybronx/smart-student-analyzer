@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Student - {{ student.first_name }}{% endblock %}
+{% block header_title %}Update Student Profile{% endblock %}
+
+{% block header_actions %}
+<a href="{{ url_for('list_students') }}" class="btn btn-sm btn-outline-secondary">
+    <i class="fa-solid fa-arrow-left me-1"></i> Back to List
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mx-auto" style="max-width: 800px;">
+    <div class="card-header bg-white py-3 border-0">
+        <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-user-pen text-primary me-2"></i>Modify Record for {{ student.first_name }} {{ student.last_name }}</h6>
+    </div>
+    <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('edit_student', student_id=student.student_id) }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Roll Number <span class="text-danger">*</span></label>
+                    <input type="text" name="roll_no" class="form-control" value="{{ student.roll_no }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Date of Birth</label>
+                    <input type="date" name="dob" class="form-control" value="{{ student.dob or '' }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">First Name <span class="text-danger">*</span></label>
+                    <input type="text" name="first_name" class="form-control" value="{{ student.first_name }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" name="last_name" class="form-control" value="{{ student.last_name }}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Course / Stream <span class="text-danger">*</span></label>
+                    <select name="course" class="form-select" required>
+                        <option value="B.Tech (CS)" {% if student.course == 'B.Tech (CS)' %}selected{% endif %}>B.Tech (CS)</option>
+                        <option value="BCA" {% if student.course == 'BCA' %}selected{% endif %}>BCA</option>
+                        <option value="MCA" {% if student.course == 'MCA' %}selected{% endif %}>MCA</option>
+                        <option value="B.Sc (IT)" {% if student.course == 'B.Sc (IT)' %}selected{% endif %}>B.Sc (IT)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small">Semester <span class="text-danger">*</span></label>
+                    <select name="semester" class="form-select" required>
+                        {% for s in range(1, 9) %}
+                            <option value="{{ s }}" {% if student.semester == s %}selected{% endif %}>Semester {{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small">Gender</label>
+                    <select name="gender" class="form-select">
+                        <option value="Male" {% if student.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if student.gender == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if student.gender == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Email Address</label>
+                    <input type="email" name="email" class="form-control" value="{{ student.email or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Contact Number</label>
+                    <input type="text" name="contact_number" class="form-control" value="{{ student.contact_number or '' }}">
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                <a href="{{ url_for('list_students') }}" class="btn btn-light border">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fa-solid fa-save me-1"></i> Update Record
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Marks{% endblock %}
+{% block header_title %}Update Examination Record{% endblock %}
+
+{% block header_actions %}
+<a href="{{ url_for('list_marks') }}" class="btn btn-sm btn-outline-secondary">
+    <i class="fa-solid fa-arrow-left me-1"></i> Back to Ledger
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mx-auto" style="max-width: 700px;">
+    <div class="card-header bg-white py-3 border-0">
+        <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-pen-to-square text-primary me-2"></i>Edit Mark Entry</h6>
+    </div>
+    <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('edit_mark', mark_id=mark.mark_id) }}">
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label fw-semibold small">Student</label>
+                    <input type="text" class="form-control bg-light" value="{{ mark.first_name }} {{ mark.last_name }} ({{ mark.roll_no }})" readonly>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-semibold small">Subject</label>
+                    <input type="text" class="form-control bg-light" value="{{ mark.subject_code }} - {{ mark.subject_name }}" readonly>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label class="form-label fw-semibold small">Exam Type <span class="text-danger">*</span></label>
+                    <select name="exam_type" class="form-select" required>
+                        <option value="Semester Exam" {% if mark.exam_type == 'Semester Exam' %}selected{% endif %}>Semester Exam</option>
+                        <option value="Mid-Term Test" {% if mark.exam_type == 'Mid-Term Test' %}selected{% endif %}>Mid-Term Test</option>
+                        <option value="Internal Assessment" {% if mark.exam_type == 'Internal Assessment' %}selected{% endif %}>Internal Assessment</option>
+                        <option value="Practical / Lab" {% if mark.exam_type == 'Practical / Lab' %}selected{% endif %}>Practical / Lab</option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label class="form-label fw-semibold small">Marks Obtained <span class="text-danger">*</span></label>
+                    <input type="number" step="0.5" name="marks_obtained" class="form-control" value="{{ mark.marks_obtained }}" min="0" max="100" required>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label class="form-label fw-semibold small">Max Marks <span class="text-danger">*</span></label>
+                    <input type="number" step="0.5" name="max_marks" class="form-control" value="{{ mark.max_marks }}" required>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                <a href="{{ url_for('list_marks') }}" class="btn btn-light border">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fa-solid fa-save me-1"></i> Update & Recalculate
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

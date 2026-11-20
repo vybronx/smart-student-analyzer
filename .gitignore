@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+env/
+venv/
+
+# Database local testing files
+*.db
+smart_student_analyzer.db
+
+# OS files
+.DS_Store
+Thumbs.db

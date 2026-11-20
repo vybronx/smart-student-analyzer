@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Student{% endblock %}
+{% block header_title %}Register New Student{% endblock %}
+
+{% block header_actions %}
+<a href="{{ url_for('list_students') }}" class="btn btn-sm btn-outline-secondary">
+    <i class="fa-solid fa-arrow-left me-1"></i> Back to List
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mx-auto" style="max-width: 800px;">
+    <div class="card-header bg-white py-3 border-0">
+        <h6 class="fw-bold text-dark mb-0"><i class="fa-solid fa-id-card text-primary me-2"></i>Student Enrollment Form</h6>
+    </div>
+    <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('add_student') }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Roll Number <span class="text-danger">*</span></label>
+                    <input type="text" name="roll_no" class="form-control" placeholder="e.g. CS10135" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Date of Birth</label>
+                    <input type="date" name="dob" class="form-control">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">First Name <span class="text-danger">*</span></label>
+                    <input type="text" name="first_name" class="form-control" placeholder="e.g. Aryan" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" name="last_name" class="form-control" placeholder="e.g. Kapoor" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Course / Stream <span class="text-danger">*</span></label>
+                    <select name="course" class="form-select" required>
+                        <option value="B.Tech (CS)">B.Tech (CS)</option>
+                        <option value="BCA">BCA</option>
+                        <option value="MCA">MCA</option>
+                        <option value="B.Sc (IT)">B.Sc (IT)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small">Semester <span class="text-danger">*</span></label>
+                    <select name="semester" class="form-select" required>
+                        {% for s in range(1, 9) %}
+                            <option value="{{ s }}">Semester {{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small">Gender</label>
+                    <select name="gender" class="form-select">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="student@university.edu">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Contact Number</label>
+                    <input type="text" name="contact_number" class="form-control" placeholder="10-digit mobile number">
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                <a href="{{ url_for('list_students') }}" class="btn btn-light border">Cancel</a>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fa-solid fa-save me-1"></i> Save Student Record
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

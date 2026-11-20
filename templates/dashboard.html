@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header_title %}Academic Analytics Dashboard{% endblock %}
+
+{% block header_actions %}
+<div class="d-flex gap-2">
+    <a href="{{ url_for('add_mark') }}" class="btn btn-sm btn-primary">
+        <i class="fa-solid fa-plus me-1"></i> Enter Marks
+    </a>
+    <a href="{{ url_for('class_reports') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="fa-solid fa-file-export me-1"></i> Generate Report
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Metric Cards Row -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card d-flex align-items-center justify-content-between">
+            <div>
+                <span class="text-muted fw-semibold small text-uppercase">Total Enrolled</span>
+                <h3 class="fw-bold text-dark mt-1 mb-0">{{ summary.total_students }}</h3>
+                <small class="text-success"><i class="fa-solid fa-user-check me-1"></i> Active Students</small>
+            </div>
+            <div class="metric-icon bg-primary bg-opacity-10 text-primary">
+                <i class="fa-solid fa-users"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card d-flex align-items-center justify-content-between">
+            <div>
+                <span class="text-muted fw-semibold small text-uppercase">Class Average</span>
+                <h3 class="fw-bold text-primary mt-1 mb-0">{{ summary.class_average }}%</h3>
+                <small class="text-muted"><i class="fa-solid fa-calculator me-1"></i> Mean Aggregate</small>
+            </div>
+            <div class="metric-icon bg-info bg-opacity-10 text-info">
+                <i class="fa-solid fa-chart-simple"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card d-flex align-items-center justify-content-between">
+            <div>
+                <span class="text-muted fw-semibold small text-uppercase">Top Performer</span>
+                {% if summary.top_performer %}
+                    <h5 class="fw-bold text-success mt-1 mb-0 text-truncate" style="max-width: 140px;">{{ summary.top_performer.first_name }} {{ summary.top_performer.last_name }}</h5>
+                    <small class="badge bg-success">{{ summary.top_performer.percentage }}% ({{ summary.top_performer.grade }})</small>
+                {% else %}
+                    <h5 class="fw-bold text-muted mt-1 mb-0">N/A</h5>
+                {% endif %}
+            </div>
+            <div class="metric-icon bg-success bg-opacity-10 text-success">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card d-flex align-items-center justify-content-between">
+            <div>
+                <span class="text-muted fw-semibold small text-uppercase">At-Risk Students</span>
+                <h3 class="fw-bold text-danger mt-1 mb-0">{{ summary.at_risk_count }}</h3>
+                <a href="{{ url_for('at_risk_students') }}" class="text-danger small text-decoration-none">
+                    <i class="fa-solid fa-arrow-right me-1"></i> Needs Intervention
+                </a>
+            </div>
+            <div class="metric-icon bg-danger bg-opacity-10 text-danger">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+    <!-- Subject Wise Performance Chart -->
+    <div class="col-12 col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-chart-column text-primary me-2"></i>Subject-Wise Mean Performance
+                </h6>
+                <span class="badge bg-light text-secondary border">Academic Year 2026</span>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px;">
+                    <canvas id="subjectChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grade Distribution Donut Chart -->
+    <div class="col-12 col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-chart-pie text-info me-2"></i>Overall Grade Distribution
+                </h6>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div style="height: 240px; width: 100%;">
+                    <canvas id="gradeChart"></canvas>
+                </div>
+                <div class="d-flex justify-content-around w-100 mt-2 small text-muted">
+                    <span>A+ / A (Distinction)</span>
+                    <span>B / C (Average)</span>
+                    <span class="text-danger">F (At Risk)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Semester Progress & Alerts Row -->
+<div class="row g-4 mb-4">
+    <!-- Semester Progress Progression -->
+    <div class="col-12 col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-arrow-trend-up text-success me-2"></i>Semester Progression Trajectory
+                </h6>
+            </div>
+            <div class="card-body">
+                <div style="height: 250px;">
+                    <canvas id="semesterChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Alerts & Interventions -->
+    <div class="col-12 col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold text-dark mb-0">
+                    <i class="fa-solid fa-bell text-warning me-2"></i>System Alerts & Insights
+                </h6>
+                <span class="badge bg-warning bg-opacity-25 text-warning-emphasis">Live Updates</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for notif in notifications %}
+                        <div class="list-group-item d-flex align-items-start px-3 py-3">
+                            <span class="me-3 mt-1">
+                                {% if notif.type == 'danger' %}
+                                    <i class="fa-solid fa-circle-exclamation text-danger"></i>
+                                {% elif notif.type == 'warning' %}
+                                    <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                                {% elif notif.type == 'success' %}
+                                    <i class="fa-solid fa-circle-check text-success"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-circle-info text-primary"></i>
+                                {% endif %}
+                            </span>
+                            <div class="flex-grow-1">
+                                <div class="small fw-semibold text-dark">{{ notif.message }}</div>
+                                <small class="text-muted" style="font-size: 0.75rem;">{{ notif.created_at }}</small>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="p-4 text-center text-muted">No recent notifications.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Performers Ranking Table -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold text-dark mb-0">
+            <i class="fa-solid fa-ranking-star text-warning me-2"></i>Student Performance Overview
+        </h6>
+        <a href="{{ url_for('list_students') }}" class="btn btn-sm btn-outline-primary">View All Students</a>
+    </div>
+    <div class="table-responsive px-3 pb-3">
+        <table class="table table-hover align-middle custom-table mb-0">
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Student Name</th>
+                    <th>Course & Sem</th>
+                    <th>Aggregate %</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for st in summary.students_analyzed[:6] %}
+                <tr>
+                    <td class="fw-bold text-primary">{{ st.roll_no }}</td>
+                    <td>{{ st.first_name }} {{ st.last_name }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ st.course }} (Sem {{ st.semester }})</span></td>
+                    <td class="fw-bold">{{ st.percentage }}%</td>
+                    <td>
+                        <span class="badge 
+                            {% if st.grade == 'A+' %}badge-grade-aplus
+                            {% elif st.grade == 'A' %}badge-grade-a
+                            {% elif st.grade == 'B' %}badge-grade-b
+                            {% elif st.grade == 'C' %}badge-grade-c
+                            {% elif st.grade == 'D' %}badge-grade-d
+                            {% else %}badge-grade-f{% endif %}">
+                            {{ st.grade }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if st.is_at_risk %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger">At Risk</span>
+                        {% else %}
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success">Good Standing</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ url_for('view_student', student_id=st.student_id) }}" class="btn btn-sm btn-light text-primary border" title="View Profile">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a href="{{ url_for('student_report', student_id=st.student_id) }}" class="btn btn-sm btn-light text-success border" title="Report Card">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Data passed from backend for Chart.js
+    const subjectLabels = {{ summary.subject_stats | map(attribute='code') | list | tojson }};
+    const subjectAverages = {{ summary.subject_stats | map(attribute='avg_marks') | list | tojson }};
+    
+    const gradeLabels = Object.keys({{ summary.grade_distribution | tojson }});
+    const gradeCounts = Object.values({{ summary.grade_distribution | tojson }});
+
+    const semLabels = Object.keys({{ summary.sem_stats | tojson }});
+    const semAverages = Object.values({{ summary.sem_stats | tojson }});
+
+    // 1. Subject Performance Bar Chart
+    new Chart(document.getElementById('subjectChart'), {
+        type: 'bar',
+        data: {
+            labels: subjectLabels,
+            datasets: [{
+                label: 'Class Average Marks',
+                data: subjectAverages,
+                backgroundColor: 'rgba(37, 99, 235, 0.75)',
+                borderColor: '#2563eb',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: { display: true, text: 'Average Score / 100' }
+                }
+            }
+        }
+    });
+
+    // 2. Grade Distribution Doughnut Chart
+    new Chart(document.getElementById('gradeChart'), {
+        type: 'doughnut',
+        data: {
+            labels: gradeLabels,
+            datasets: [{
+                data: gradeCounts,
+                backgroundColor: [
+                    '#10b981', // A+
+                    '#059669', // A
+                    '#3b82f6', // B
+                    '#f59e0b', // C
+                    '#f97316', // D
+                    '#ef4444'  // F
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // 3. Semester Progression Line Chart
+    new Chart(document.getElementById('semesterChart'), {
+        type: 'line',
+        data: {
+            labels: semLabels.length ? semLabels : ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+            datasets: [{
+                label: 'Mean Semester Aggregate %',
+                data: semAverages.length ? semAverages : [72, 75, 78, 80],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.3,
+                fill: true,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    min: 40,
+                    max: 100,
+                    title: { display: true, text: 'Average Percentage (%)' }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
